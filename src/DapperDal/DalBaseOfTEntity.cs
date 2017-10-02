@@ -2,7 +2,9 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.OracleClient;
 using DapperDal.Mapper;
+using DapperDal.Sql;
 
 namespace DapperDal
 {
@@ -58,7 +60,7 @@ namespace DapperDal
         public DalBase(string connNameOrConnStr)
         {
             Configuration = DalConfiguration.Default;
-
+            
             // 初始化配置项
             SetDefaultOptions();
 
@@ -102,7 +104,9 @@ namespace DapperDal
                 throw new ArgumentNullException("connectionString");
             }
 
-            var connection = new SqlConnection(connectionString);
+            //------------------------这里应该区分下数据库类型-------------------
+            //var connection = new SqlConnection(connectionString);
+            var connection = new OracleConnection(connectionString);
             if (connection == null)
                 throw new ConfigurationErrorsException(
                     string.Format("Failed to create a connection using the connection string '{0}'.", connectionString));
@@ -122,6 +126,8 @@ namespace DapperDal
                 DalConfiguration.Default.DefaultMapper = typeof(AutoEntityMapper<>);
                 DalConfiguration.Default.Nolock = true;
                 DalConfiguration.Default.Buffered = true;
+
+                DalConfiguration.Default.Dialect = new OracleDialect();
             }
         }
 
