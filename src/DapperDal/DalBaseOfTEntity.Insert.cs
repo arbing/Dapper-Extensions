@@ -6,6 +6,11 @@ using System.Text;
 
 namespace DapperDal
 {
+    /// <summary>
+    /// 数据访问层基类 
+    /// </summary>
+    /// <typeparam name="TEntity">实体</typeparam>
+    /// <typeparam name="TPrimaryKey">主键数据类型</typeparam>
     public partial class DalBase<TEntity, TPrimaryKey> where TEntity : class
     {
         /// <summary>

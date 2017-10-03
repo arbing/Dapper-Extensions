@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
 using DapperDal.Utils;
+using DapperDal.Attributes;
 
 namespace DapperDal.Mapper
 {
@@ -128,6 +129,7 @@ namespace DapperDal.Mapper
             PropertyMap keyMap = null;
             foreach (var propertyInfo in type.GetProperties())
             {
+                
                 if (Properties.Any(p => p.Name.Equals(propertyInfo.Name, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     continue;
@@ -141,11 +143,21 @@ namespace DapperDal.Mapper
                 PropertyMap map = Map(propertyInfo);
                 if (!hasDefinedKey)
                 {
-                    if (string.Equals(map.PropertyInfo.Name, "id", StringComparison.InvariantCultureIgnoreCase))
+                    //--------------------jiftle 添加----- 解决主键不是id 或id结尾的情况----------------
+                    var fieldAtrribute = (FieldAtrribute)Attribute.GetCustomAttribute(propertyInfo, typeof(FieldAtrribute));
+                    if (fieldAtrribute != null && fieldAtrribute.IsPrimaryKey)
                     {
                         keyMap = map;
                     }
 
+                    //字段名是 id 认为是主键
+                    //if (string.Equals(map.PropertyInfo.Name, "id", StringComparison.InvariantCultureIgnoreCase))
+                    if (keyMap == null && string.Equals(map.PropertyInfo.Name, "id", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        keyMap = map;
+                    }
+
+                    //字段名用id结尾 认为是主键
                     if (keyMap == null && map.PropertyInfo.Name.EndsWith("id", true, CultureInfo.InvariantCulture))
                     {
                         keyMap = map;

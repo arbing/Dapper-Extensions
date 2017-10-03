@@ -10,6 +10,7 @@ using DapperDal.Mapper;
 using DapperDal.Predicate;
 using DapperDal.Sql;
 using DapperDal.Utils;
+using NLog;
 
 namespace DapperDal.Implementor
 {
@@ -235,6 +236,8 @@ namespace DapperDal.Implementor
     /// </summary>
     public class DalImplementor : IDalImplementor
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// 初始化数据访问器
         /// </summary>
@@ -293,10 +296,12 @@ namespace DapperDal.Implementor
 
             if (triggerIdentityColumn == null)
             {
+                logger.Debug("DapperDal SQL: " + sql);
                 connection.Execute(sql, entities, transaction, commandTimeout, CommandType.Text);
             }
             else
             {
+                logger.Debug("DapperDal SQL: " + sql);
                 connection.Execute(sql, parameters, transaction, commandTimeout, CommandType.Text);
             }
         }
@@ -325,10 +330,13 @@ namespace DapperDal.Implementor
                 if (SqlGenerator.SupportsMultipleStatements())
                 {
                     sql += SqlGenerator.Configuration.Dialect.BatchSeperator + SqlGenerator.IdentitySql(classMap);
+
+                    logger.Debug("DapperDal SQL: " + sql);
                     result = connection.Query<long>(sql, entity, transaction, false, commandTimeout, CommandType.Text);
                 }
                 else
                 {
+                    logger.Debug("DapperDal SQL: " + sql);
                     connection.Execute(sql, entity, transaction, commandTimeout, CommandType.Text);
                     sql = SqlGenerator.IdentitySql(classMap);
                     result = connection.Query<long>(sql, entity, transaction, false, commandTimeout, CommandType.Text);
@@ -352,6 +360,7 @@ namespace DapperDal.Implementor
                 var defaultValue = entity.GetType().GetProperty(triggerIdentityColumn.PropertyInfo.Name).GetValue(entity, null);
                 dynamicParameters.Add("IdOutParam", direction: ParameterDirection.Output, value: defaultValue);
 
+                logger.Debug("DapperDal SQL: " + sql);
                 connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
 
                 var value = dynamicParameters.Get<object>(SqlGenerator.Configuration.Dialect.ParameterPrefix + "IdOutParam");
@@ -360,6 +369,7 @@ namespace DapperDal.Implementor
             }
             else
             {
+                logger.Debug("DapperDal SQL: " + sql);
                 connection.Execute(sql, entity, transaction, commandTimeout, CommandType.Text);
             }
 
@@ -396,6 +406,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
         }
 
@@ -422,6 +433,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
         }
 
@@ -450,6 +462,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
         }
 
@@ -463,7 +476,6 @@ namespace DapperDal.Implementor
             var propValues = ReflectionHelper.GetObjectValues(keyAndProps);
             var propKeys = propValues.Keys.ToList();
             string sql = SqlGenerator.Update(classMap, predicate, parameters, propKeys);
-
             var columns = classMap.Properties.Where(
                 p => (propKeys.Count == 0 || propKeys.Contains(p.Name, StringComparer.OrdinalIgnoreCase)) &&
                      !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned));
@@ -479,6 +491,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
         }
 
@@ -495,7 +508,9 @@ namespace DapperDal.Implementor
             var columns = classMap.Properties.Where(
                 p => (propKeys.Count == 0 || propKeys.Contains(p.Name, StringComparer.OrdinalIgnoreCase)) &&
                      !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned));
-
+           // var columns = classMap.Properties.Where(
+           //p => (propKeys.Count == 0 || propKeys.Contains(p.Name, StringComparer.OrdinalIgnoreCase)) &&
+           //     !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity));
             DynamicParameters dynamicParameters = new DynamicParameters();
             foreach (var property in propValues.Where(property => columns.Any(c => c.Name.Equals(property.Key, StringComparison.OrdinalIgnoreCase))))
             {
@@ -507,6 +522,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
         }
 
@@ -580,6 +596,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return (int)connection.Query(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text).Single().Total;
         }
 
@@ -623,6 +640,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return connection.Query<T>(sql, dynamicParameters, transaction, buffered, commandTimeout, CommandType.Text);
         }
 
@@ -650,6 +668,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return connection.Query<T>(sql, dynamicParameters, transaction, buffered, commandTimeout, CommandType.Text);
         }
 
@@ -677,6 +696,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return connection.Query<T>(sql, dynamicParameters, transaction, buffered, commandTimeout, CommandType.Text);
         }
 
@@ -700,6 +720,7 @@ namespace DapperDal.Implementor
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
+            logger.Debug("DapperDal SQL: " + sql);
             return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
         }
 
