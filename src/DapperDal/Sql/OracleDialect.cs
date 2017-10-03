@@ -101,14 +101,51 @@ namespace DapperDal.Sql
                 return sql;
             }
 
-            return sql.Insert(sql.Length,
-                string.Format(" AND ROWNUM <= {0}", limit));
+            const string where = " WHERE ";
+            const string orderby = " ORDER BY ";
+
+            if (sql.Contains(orderby))
+            {
+                sql = sql.Insert(sql.IndexOf(orderby, StringComparison.OrdinalIgnoreCase), string.Format(" AND ROWNUM <= {0} ", limit));
+            }else
+            {
+                if (sql.Contains(where))
+                {
+                    sql = sql.Insert(sql.Length, string.Format(" AND ROWNUM <= {0} ", limit));
+                }
+            }
+
+            return sql;
+
+            //return sql.Insert(sql.Length,
+            //    string.Format(" AND ROWNUM <= {0}", limit));
         }
 
         /// <inheritdoc />
         public override string SetNolock(string sql)
         {
-                return sql;
+            return sql;
+
+            //const string withNolock = " WITH (NOLOCK)";
+            //const string where = " WHERE ";
+            //const string orderby = " ORDER BY ";
+
+            //if (sql.Contains(withNolock))
+            //{
+            //    return sql;
+            //}
+
+            //if (sql.Contains(where))
+            //{
+            //    return sql.Insert(sql.IndexOf(where, StringComparison.OrdinalIgnoreCase), withNolock);
+            //}
+
+            //if (sql.Contains(orderby))
+            //{
+            //    return sql.Insert(sql.IndexOf(orderby, StringComparison.OrdinalIgnoreCase), withNolock);
+            //}
+
+            //return string.Concat(sql, withNolock);
         }
     }
 }
