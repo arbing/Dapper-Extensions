@@ -96,26 +96,52 @@ namespace DapperDal.Sql
         /// <inheritdoc />
         public override string SelectLimit(string sql, int limit)
         {//rownum <= 1
+
             if (sql.Contains("ROWNUM <"))
             {
                 return sql;
             }
 
-            const string where = " WHERE ";
-            const string orderby = " ORDER BY ";
+            sql = string.Format("SELECT * FROM ({0}) WHERE ROWNUM <= 1",sql);
 
-            if (sql.Contains(orderby))
-            {
-                sql = sql.Insert(sql.IndexOf(orderby, StringComparison.OrdinalIgnoreCase), string.Format(" AND ROWNUM <= {0} ", limit));
-            }else
-            {
-                if (sql.Contains(where))
-                {
-                    sql = sql.Insert(sql.Length, string.Format(" AND ROWNUM <= {0} ", limit));
-                }
-            }
+            //const string where = " WHERE ";
+            //const string orderby = " ORDER BY ";
+
+            //if (sql.Contains(orderby))
+            //{
+            //    sql = sql.Insert(sql.IndexOf(orderby, StringComparison.OrdinalIgnoreCase), string.Format(" AND ROWNUM <= {0} ", limit));
+            //}
+            //else
+            //{
+            //    if (sql.Contains(where))
+            //    {
+            //        sql = sql.Insert(sql.Length, string.Format(" AND ROWNUM <= {0} ", limit));
+            //    }
+            //}
 
             return sql;
+
+            //----------------------------获取单条记录有问题---------------------------
+            //if (sql.Contains("ROWNUM <"))
+            //{
+            //    return sql;
+            //}
+
+            //const string where = " WHERE ";
+            //const string orderby = " ORDER BY ";
+
+            //if (sql.Contains(orderby))
+            //{
+            //    sql = sql.Insert(sql.IndexOf(orderby, StringComparison.OrdinalIgnoreCase), string.Format(" AND ROWNUM <= {0} ", limit));
+            //}else
+            //{
+            //    if (sql.Contains(where))
+            //    {
+            //        sql = sql.Insert(sql.Length, string.Format(" AND ROWNUM <= {0} ", limit));
+            //    }
+            //}
+
+            //return sql;
 
             //return sql.Insert(sql.Length,
             //    string.Format(" AND ROWNUM <= {0}", limit));

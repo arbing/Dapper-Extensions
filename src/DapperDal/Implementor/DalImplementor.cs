@@ -641,7 +641,12 @@ namespace DapperDal.Implementor
             }
 
             logger.Debug("DapperDal SQL: " + sql);
+
+            //sql = "Select * from (SELECT ABS_TERMINFOUPLOAD.TERMNO, ABS_TERMINFOUPLOAD.UPLOADTIME, ABS_TERMINFOUPLOAD.OPDT, ABS_TERMINFOUPLOAD.STATUS, ABS_TERMINFOUPLOAD.VERINFO, ABS_TERMINFOUPLOAD.DESCRIPTION FROM ABS_TERMINFOUPLOAD WHERE (ABS_TERMINFOUPLOAD.TERMNO = '10000002')   ORDER BY ABS_TERMINFOUPLOAD.OPDT DESC) where ROWNUM <= 1 ";
             return connection.Query<T>(sql, dynamicParameters, transaction, buffered, commandTimeout, CommandType.Text);
+
+            //IEnumerable<T> list = connection.Query<T>(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text);
+            //return list;
         }
 
         /// <summary>

@@ -52,12 +52,16 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapper, Version=1.50.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\coding_net\anbao\code\ScWCFService\packages\Dapper.1.50.1\lib\net40\Dapper.dll</HintPath>
+    <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\coding_net\anbao\code\1.前置服务\ScWCFService\packages\Dapper.1.50.2\lib\net40\Dapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\coding_net\anbao\code\ScWCFService\packages\NLog.4.4.12\lib\net40\NLog.dll</HintPath>
+      <HintPath>..\..\..\..\coding_net\anbao\code\1.前置服务\ScWCFService\packages\NLog.4.4.12\lib\net40\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\coding_net\anbao\code\1.前置服务\ScWCFService\packages\Oracle.ManagedDataAccess.12.2.1100\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -102,6 +106,10 @@
     <Compile Include="DalOptions.cs" />
     <Compile Include="DalConfiguration.cs" />
     <Compile Include="Expressions\PredicateExtensions.cs" />
+    <Compile Include="Providers\Common\ConnectionFactory.cs" />
+    <Compile Include="Providers\IDbProvider.cs" />
+    <Compile Include="Providers\OracleProvider.cs" />
+    <Compile Include="Providers\SqlServerProvider.cs" />
     <Compile Include="Sql\OracleDialect.cs" />
     <Compile Include="Utils\ExpressionExtensions.cs" />
     <Compile Include="Expressions\ExpressionUtility.cs" />
@@ -126,6 +134,7 @@
     <Compile Include="Sql\SqlServerDialect.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
