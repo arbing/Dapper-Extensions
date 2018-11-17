@@ -354,20 +354,24 @@ namespace DapperDal.Sql
             var columns = classMap.Properties.Where(
                 p => (props == null || props.Count == 0 || props.Contains(p.Name, StringComparer.OrdinalIgnoreCase)) &&
                      !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned));
+            //var columns = classMap.Properties.Where(
+            // p => (props == null || props.Count == 0 || props.Contains(p.Name, StringComparer.OrdinalIgnoreCase)) &&
+            //      !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity));
             if (!columns.Any())
             {
                 throw new ArgumentException("No columns were mapped.");
             }
-
+            //DapperDal.Mapper.KeyType
             var setSql =
                 columns.Select(
                     p =>
                     string.Format(
                         "{0} = {1}{2}", GetColumnName(classMap, p, false), Configuration.Dialect.ParameterPrefix, p.Name));
+            string strSetSql = setSql.AppendStrings();
 
             var sql = string.Format("UPDATE {0} SET {1} WHERE {2}",
                 GetTableName(classMap),
-                setSql.AppendStrings(),
+               strSetSql,
                 predicate.GetSql(this, parameters));
 
             if (Configuration.OutputSql != null)
